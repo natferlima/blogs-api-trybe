@@ -1,9 +1,10 @@
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 
 const create = async ({ displayName, email, password, image }) => {
   const result = await User.create({ displayName, email, password, image });
-  const token = jwt.sign(result.dataValues, 'SEGREDO', {
+  const token = jwt.sign(result.dataValues, process.env.JWT_SECRET, {
     algorithm: 'HS256',
     expiresIn: '1d',
   });
@@ -15,7 +16,13 @@ const findOne = async (email) => {
   return result;
 };
 
+const findAll = async () => {
+  const result = await User.findAll();
+  return result;
+};
+
 module.exports = {
   create,
   findOne,
+  findAll,
 };

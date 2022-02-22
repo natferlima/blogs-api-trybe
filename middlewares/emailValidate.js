@@ -4,6 +4,9 @@ module.exports = async (req, res, next) => {
   if (email === undefined) {
     return res.status(400).json({ message: '"email" is required' });
   }
+  if (email === '') {
+    return res.status(400).json({ message: '"email" is not allowed to be empty' });
+  }
   if (!regexEmail.test(email)) {
     return res.status(400).json({ 
       message: '"email" must be a valid email' });
