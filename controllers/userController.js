@@ -5,7 +5,7 @@ const emailValidate = require('../middlewares/emailValidate');
 const notExistsToken = require('../middlewares/notExistsToken');
 const passwordValidate = require('../middlewares/passwordValidate');
 const tokenValidate = require('../middlewares/tokenValidate');
-const { create, findAll } = require('../services/userService');
+const { create, findAll, findById } = require('../services/userService');
 
 const router = express.Router();
 
@@ -21,8 +21,15 @@ router
   })
   .get('/', notExistsToken, tokenValidate, async (req, res) => {
     const result = await findAll();
-    console.log(result);
     res.status(200).json(result);
+  })
+  .get('/:id', notExistsToken, tokenValidate, async (req, res) => {
+    const { id } = req.params;
+    const result = await findById(id);
+    if (!result) {
+      return res.status(404).json({ message: 'User does not exist' });
+    }
+    return res.status(200).json(result);
   });
 
 module.exports = router;

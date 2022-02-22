@@ -21,8 +21,14 @@ const findAll = async () => {
   return result;
 };
 
+const findById = async (id) => {
+  const result = await User.findByPk(id);
+  return result;
+};
+
 module.exports = {
   create,
   findOne,
   findAll,
+  findById,
 };
