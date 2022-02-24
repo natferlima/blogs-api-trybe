@@ -6,7 +6,7 @@ const notExistsToken = require('../middlewares/notExistsToken');
 const postValidate = require('../middlewares/postValidate');
 const tokenValidate = require('../middlewares/tokenValidate');
 
-const { create, findAll } = require('../services/postService');
+const { create, findAll, findById } = require('../services/postService');
 
 const router = express.Router();
 
@@ -24,8 +24,15 @@ router
   })
   .get('/', notExistsToken, tokenValidate, async (req, res) => {
     const result = await findAll();
-    console.log(result);
     res.status(200).json(result);
+  })
+  .get('/:id', notExistsToken, tokenValidate, async (req, res) => {
+    const { id } = req.params;
+    const result = await findById(id);
+    if (!result) {
+      return res.status(404).json({ message: 'Post does not exist' });
+    } 
+    return res.status(200).json(result);
   });
 
 module.exports = router;
