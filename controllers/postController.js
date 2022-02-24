@@ -2,13 +2,14 @@ const express = require('express');
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const categoryIdValidate = require('../middlewares/categoryIdValidate');
+const notExistsPost = require('../middlewares/notExistsPost');
 const notExistsToken = require('../middlewares/notExistsToken');
 const postValidate = require('../middlewares/postValidate');
 const tokenValidate = require('../middlewares/tokenValidate');
 const updateValidate = require('../middlewares/updateValidate');
 const userValidate = require('../middlewares/userValidate');
 
-const { create, findAll, findById, update } = require('../services/postService');
+const { create, findAll, findById, update, remove } = require('../services/postService');
 
 const router = express.Router();
 
@@ -28,20 +29,21 @@ router
     const result = await findAll();
     res.status(200).json(result);
   })
-  .get('/:id', notExistsToken, tokenValidate, async (req, res) => {
+  .get('/:id', notExistsToken, tokenValidate, notExistsPost, async (req, res) => {
     const { id } = req.params;
     const result = await findById(id);
-    if (!result) {
-      return res.status(404).json({ message: 'Post does not exist' });
-    } 
     return res.status(200).json(result);
   })
   .put('/:id', notExistsToken, tokenValidate, updateValidate, userValidate, async (req, res) => {
     const { id } = req.params;
     const { title, content } = req.body;
     const result = await update(id, title, content);
-    console.log('resultado update', result);
     res.status(200).json(result);
+  })
+  .delete('/:id', notExistsToken, tokenValidate, notExistsPost, userValidate, async (req, res) => {
+    const { id } = req.params;
+    await remove(id);
+    res.status(204).end();
   });
 
 module.exports = router;

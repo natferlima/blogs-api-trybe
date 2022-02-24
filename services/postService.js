@@ -43,10 +43,15 @@ const update = async (id, title, content) => {
   return result;
 };
 
+const remove = async (id) => {
+  await BlogPost.destroy({ where: { id } });
+};
+
 module.exports = {
   create,
   findAll,
   findById,
   update,
+  remove,
 
 };
