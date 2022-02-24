@@ -1,3 +1,5 @@
+require('dotenv').config();
+const jwt = require('jsonwebtoken');
 const express = require('express');
 const alreadyExistsEmail = require('../middlewares/alreadyExistsEmail');
 const displayNameValidate = require('../middlewares/displayNameValidate');
@@ -5,7 +7,7 @@ const emailValidate = require('../middlewares/emailValidate');
 const notExistsToken = require('../middlewares/notExistsToken');
 const passwordValidate = require('../middlewares/passwordValidate');
 const tokenValidate = require('../middlewares/tokenValidate');
-const { create, findAll, findById } = require('../services/userService');
+const { create, findAll, findById, findOne, remove } = require('../services/userService');
 
 const router = express.Router();
 
@@ -30,6 +32,13 @@ router
       return res.status(404).json({ message: 'User does not exist' });
     }
     return res.status(200).json(result);
+  })
+  .delete('/me', notExistsToken, tokenValidate, async (req, res) => {
+    const { authorization } = req.headers;
+    const { email } = jwt.verify(authorization, process.env.JWT_SECRET);
+    const { id } = await findOne(email);
+    await remove(id);
+    res.status(204).end();
   });
 
 module.exports = router;

@@ -26,9 +26,14 @@ const findById = async (id) => {
   return result;
 };
 
+const remove = async (id) => {
+  await User.destroy({ where: { id } });
+};
+
 module.exports = {
   create,
   findOne,
   findAll,
   findById,
+  remove,
 };
